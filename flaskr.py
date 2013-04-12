@@ -1,19 +1,16 @@
-import sqlite3
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash
+import psycopg2
 
 # configuration
-DATABASE = '/tmp/flaskr.db'
 DEBUG = True
 SECRET_KEY = 'development key'
-USERNAME = 'admin'
-PASSWORD = 'default'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
 
 def connect_db():
-    return sqlite3.connect(app.config['DATABASE'])
+    return psycopg2.connect("dbname=flaskr user=flaskr password=abc")
 
 @app.before_request
 def before_request():
@@ -25,7 +22,8 @@ def after_request(response):
 
 @app.route('/')
 def show_entries():
-    cur = g.db.execute('select title, text from entries order by id desc')
+    cur = g.db.cursor()
+    cur.execute('select title, text from entries order by id desc')
     entries = [dict(title=row[0], text=row[1]) for row in cur.fetchall()]
     return render_template("show_entries.html", entries=entries)
 
@@ -33,8 +31,8 @@ def show_entries():
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
-    g.db.execute('insert into entries (title, text) values (?, ?)',
-                 [request.form['title'], request.form['text']])
+    cur = g.db.cursor()
+    cur.execute('insert into entries (title, text) values("%s, %s")', [request.form['title'], request.form['text']])
     g.db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
@@ -45,8 +43,9 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        c = g.db.execute("select * from users where username=? and password=?", [username, password])
-        result = c.fetchone()
+        cur = g.db.cursor()
+        cur.execute("select * from users where username=%s and password=%s", [username, password])
+        result = cur.fetchone()
         if not result:
             error = "Username and password do not match"
         else:
@@ -66,12 +65,13 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        g.db.execute('insert into users(username, password) values(?, ?)', [username, password])
+        cur = g.db.cursor()
+        cur.execute('insert into users(username, password) values(%s, %s)', [username, password])
         g.db.commit()
         flash('You are registered')
         return redirect(url_for('login'))
     return render_template('register.html')
 
 
-#if __name__ == '__main__':
-    #app.run()
+if __name__ == '__main__':
+    app.run()
