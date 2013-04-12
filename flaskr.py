@@ -10,7 +10,8 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 def connect_db():
-    return psycopg2.connect("dbname=flaskr user=flaskr password=abc")
+    #return psycopg2.connect("dbname=flaskr user=flaskr password=abc")
+    return psycopg2.connect("dbname=d9j5h7pfqjilu7 host=ec2-23-21-203-9.compute-1.amazonaws.com port=5432 user=odioihkgzintvo password=l7UGUttB6ckdehQ_ccT3i8s4yn")
 
 @app.before_request
 def before_request():
