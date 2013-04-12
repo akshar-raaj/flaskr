@@ -1,6 +1,7 @@
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash
 import psycopg2
+import os
 
 # configuration
 DEBUG = True
@@ -11,7 +12,14 @@ app.config.from_object(__name__)
 
 def connect_db():
     #return psycopg2.connect("dbname=flaskr user=flaskr password=abc")
-    return psycopg2.connect("dbname=d9j5h7pfqjilu7 host=ec2-23-21-203-9.compute-1.amazonaws.com port=5432 user=odioihkgzintvo password=l7UGUttB6ckdehQ_ccT3i8s4yn")
+    params = {}
+    params['database'] = os.environ['DATABASE_NAME']
+    params['user'] = os.environ['DATABASE_USER']
+    params['password'] = os.environ['DATABASE_PASSWORD']
+    params['host'] = os.environ['DATABASE_HOST']
+    params['port'] = os.environ['DATABASE_PORT']
+    #return psycopg2.connect("dbname=d9j5h7pfqjilu7 host=ec2-23-21-203-9.compute-1.amazonaws.com port=5432 user=odioihkgzintvo password=l7UGUttB6ckdehQ_ccT3i8s4yn")
+    return psycopg2.connect(**params)
 
 @app.before_request
 def before_request():
