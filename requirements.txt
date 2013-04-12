@@ -5,4 +5,5 @@ argparse==1.2.1
 gunicorn==0.17.2
 ipdb==0.7
 ipython==0.13.2
+psycopg2==2.5
 wsgiref==0.1.2
