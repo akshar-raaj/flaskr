@@ -18,7 +18,6 @@ def connect_db():
     params['password'] = os.environ['DATABASE_PASSWORD']
     params['host'] = os.environ['DATABASE_HOST']
     params['port'] = os.environ['DATABASE_PORT']
-    #return psycopg2.connect("dbname=d9j5h7pfqjilu7 host=ec2-23-21-203-9.compute-1.amazonaws.com port=5432 user=odioihkgzintvo password=l7UGUttB6ckdehQ_ccT3i8s4yn")
     return psycopg2.connect(**params)
 
 @app.before_request
