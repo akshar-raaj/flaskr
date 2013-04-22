@@ -33,7 +33,7 @@ def after_request(response):
 
 @app.route('/')
 def show_entries():
-    entries = [dict(title=each.title, text=each.text) for each in g.db.query(Entry).all()]
+    entries = g.db.query(Entry).all()
     return render_template("show_entries.html", entries=entries)
 
 @app.route('/add', methods=['POST'])
