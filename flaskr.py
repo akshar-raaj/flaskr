@@ -1,23 +1,15 @@
 from flask import Flask, request, session, g, redirect, url_for, \
      abort, render_template, flash
 import psycopg2
-import os
-
-# configuration
-DEBUG = True
-SECRET_KEY = 'development key'
 
 app = Flask(__name__)
-app.config.from_object(__name__)
+app.config.from_object('local_settings')
 
 def connect_db():
-    #return psycopg2.connect("dbname=flaskr user=flaskr password=abc")
     params = {}
-    params['database'] = os.environ['DATABASE_NAME']
-    params['user'] = os.environ['DATABASE_USER']
-    params['password'] = os.environ['DATABASE_PASSWORD']
-    params['host'] = os.environ['DATABASE_HOST']
-    params['port'] = os.environ['DATABASE_PORT']
+    params['database'] = app.config['DATABASE_NAME']
+    params['user'] = app.config['DATABASE_USER']
+    params['password'] = app.config['DATABASE_PASSWORD']
     return psycopg2.connect(**params)
 
 @app.before_request
