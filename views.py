@@ -2,8 +2,17 @@ from flask import request, session, g, redirect, url_for, \
      abort, render_template, flash
 
 from flaskr import app
+from models import Entry
 
 import psycopg2
+import sqlalchemy
+from sqlalchemy.orm import sessionmaker
+
+def connect_with_sqlalchemy():
+    creation_string = "%s+%s://%s:%s@%s/%s" % ("postgresql", "psycopg2", app.config['DATABASE_USER'], app.config['DATABASE_PASSWORD'], "localhost", app.config['DATABASE_NAME'])
+    engine = sqlalchemy.create_engine(creation_string)
+    Session = sessionmaker(bind=engine)
+    return Session()
 
 def connect_db():
     params = {}
@@ -14,17 +23,17 @@ def connect_db():
 
 @app.before_request
 def before_request():
-    g.db = connect_db()
+    #g.db = connect_db()
+    g.db = connect_with_sqlalchemy()
 
 @app.teardown_request
 def after_request(response):
-    g.db.close()
+    #g.db.close()
+    pass
 
 @app.route('/')
 def show_entries():
-    cur = g.db.cursor()
-    cur.execute('select title, text from entries order by id desc')
-    entries = [dict(title=row[0], text=row[1]) for row in cur.fetchall()]
+    entries = [dict(title=each.title, text=each.text) for each in g.db.query(Entry).all()]
     return render_template("show_entries.html", entries=entries)
 
 @app.route('/add', methods=['POST'])
