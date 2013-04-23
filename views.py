@@ -40,8 +40,8 @@ def show_entries():
 def add_entry():
     if not session.get('logged_in'):
         abort(401)
-    cur = g.db.cursor()
-    cur.execute('insert into entries (title, text) values(%s, %s)', [request.form['title'], request.form['text']])
+    entry = Entry(title=request.form['title'], text=request.form['text'])
+    g.db.add(entry)
     g.db.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
