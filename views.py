@@ -2,7 +2,7 @@ from flask import request, session, g, redirect, url_for, \
      abort, render_template, flash
 
 from flaskr import app
-from models import Entry
+from models import Entry, User
 
 import psycopg2
 import sqlalchemy
@@ -33,7 +33,7 @@ def after_request(response):
 
 @app.route('/')
 def show_entries():
-    entries = g.db.query(Entry).all()
+    entries = g.db.query(Entry).order_by(Entry.id).all()
     return render_template("show_entries.html", entries=entries)
 
 @app.route('/add', methods=['POST'])
@@ -52,9 +52,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        cur = g.db.cursor()
-        cur.execute("select * from users where username=%s and password=%s", [username, password])
-        result = cur.fetchone()
+        result = g.db.query(User).filter_by(username=username, password=password).first()
         if not result:
             error = "Username and password do not match"
         else:
