@@ -72,8 +72,8 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        cur = g.db.cursor()
-        cur.execute('insert into users(username, password) values(%s, %s)', [username, password])
+        user = User(username=username, password=password)
+        g.db.add(user)
         g.db.commit()
         flash('You are registered')
         return redirect(url_for('login'))
