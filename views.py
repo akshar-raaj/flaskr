@@ -4,7 +4,6 @@ from flask import request, session, g, redirect, url_for, \
 from flaskr import app
 from models import Entry, User
 
-import psycopg2
 import sqlalchemy
 from sqlalchemy.orm import sessionmaker
 
@@ -14,16 +13,8 @@ def connect_with_sqlalchemy():
     Session = sessionmaker(bind=engine)
     return Session()
 
-def connect_db():
-    params = {}
-    params['database'] = app.config['DATABASE_NAME']
-    params['user'] = app.config['DATABASE_USER']
-    params['password'] = app.config['DATABASE_PASSWORD']
-    return psycopg2.connect(**params)
-
 @app.before_request
 def before_request():
-    #g.db = connect_db()
     g.db = connect_with_sqlalchemy()
 
 @app.teardown_request
