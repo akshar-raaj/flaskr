@@ -19,8 +19,7 @@ def before_request():
 
 @app.teardown_request
 def after_request(response):
-    #g.db.close()
-    pass
+    g.db.close()
 
 @app.route('/')
 def show_entries():
