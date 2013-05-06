@@ -1,15 +1,10 @@
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String
+from flaskr import db
 
-Base = declarative_base()
+class Entry(db.Model):
 
-class Entry(Base):
-
-    __tablename__ = 'entries'
-
-    id = Column(Integer, primary_key=True)
-    title = Column(String)
-    text = Column(String)
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(80))
+    text = db.Column(db.String(100))
 
     def __init__(self, title, text):
         self.title = title
@@ -18,13 +13,11 @@ class Entry(Base):
     def __repr__(self):
         return self.title
 
-class User(Base):
+class User(db.Model):
 
-    __tablename__ = 'users'
-
-    id = Column(Integer, primary_key=True)
-    username = Column(String)
-    password = Column(String)
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80))
+    password = db.Column(db.String(80))
 
     def __init__(self, username, password):
         self.username = username

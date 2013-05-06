@@ -1,7 +1,7 @@
 from flask import request, session, g, redirect, url_for, \
      abort, render_template, flash
 
-from flaskr import app
+from flaskr import app, db
 from models import Entry, User
 
 import sqlalchemy
@@ -15,15 +15,15 @@ def connect_with_sqlalchemy():
 
 @app.before_request
 def before_request():
-    g.db = connect_with_sqlalchemy()
+    pass
 
 @app.teardown_request
 def after_request(response):
-    g.db.close()
+    pass
 
 @app.route('/')
 def show_entries():
-    entries = g.db.query(Entry).order_by(Entry.id).all()
+    entries = Entry.query.all()
     return render_template("show_entries.html", entries=entries)
 
 @app.route('/add', methods=['POST'])
@@ -31,8 +31,8 @@ def add_entry():
     if not session.get('logged_in'):
         abort(401)
     entry = Entry(title=request.form['title'], text=request.form['text'])
-    g.db.add(entry)
-    g.db.commit()
+    db.session.add(entry)
+    db.session.commit()
     flash('New entry was successfully posted')
     return redirect(url_for('show_entries'))
 
@@ -42,7 +42,7 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        result = g.db.query(User).filter_by(username=username, password=password).first()
+        result = User.query.filter_by(username=username, password=password).first()
         if not result:
             error = "Username and password do not match"
         else:
@@ -63,8 +63,8 @@ def register():
         username = request.form['username']
         password = request.form['password']
         user = User(username=username, password=password)
-        g.db.add(user)
-        g.db.commit()
+        db.session.add(user)
+        db.session.commit()
         flash('You are registered')
         return redirect(url_for('login'))
     return render_template('register.html')
