@@ -4,15 +4,6 @@ from flask import request, session, redirect, url_for, \
 from flaskr import app, db
 from models import Entry, User
 
-import sqlalchemy
-from sqlalchemy.orm import sessionmaker
-
-def connect_with_sqlalchemy():
-    creation_string = "%s+%s://%s:%s@%s/%s" % ("postgresql", "psycopg2", app.config['DATABASE_USER'], app.config['DATABASE_PASSWORD'], "localhost", app.config['DATABASE_NAME'])
-    engine = sqlalchemy.create_engine(creation_string)
-    Session = sessionmaker(bind=engine)
-    return Session()
-
 @app.before_request
 def before_request():
     pass
