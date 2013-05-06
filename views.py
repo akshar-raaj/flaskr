@@ -1,4 +1,4 @@
-from flask import request, session, g, redirect, url_for, \
+from flask import request, session, redirect, url_for, \
      abort, render_template, flash
 
 from flaskr import app, db
