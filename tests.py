@@ -1,5 +1,6 @@
 import unittest
 
+import main
 import flaskr
 from models import User, Entry
 
@@ -8,7 +9,7 @@ flaskr.app.config.from_object('test_settings')
 class FlaskrTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.session = flaskr.connect_with_sqlalchemy()
+        self.session = main.connect_with_sqlalchemy()
         self.app = flaskr.app.test_client()
 
     def tearDown(self):
