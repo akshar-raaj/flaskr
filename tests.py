@@ -1,21 +1,23 @@
 import unittest
 
-import main
+import main #To load the urls and views
 import flaskr
-from models import User, Entry
+from flaskr import app, db
+from models import User
 
 flaskr.app.config.from_object('test_settings')
 
 class FlaskrTestCase(unittest.TestCase):
 
     def setUp(self):
-        self.session = main.connect_with_sqlalchemy()
+        c = app.config
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%s:%s@%s/%s' % (c['DATABASE_USER'], c['DATABASE_PASSWORD'], 'localhost', c['DATABASE_NAME'])
         self.app = flaskr.app.test_client()
+        db.create_all()
 
     def tearDown(self):
-        self.session.query(User).filter().delete()
-        self.session.query(Entry).filter().delete()
-        self.session.commit()
+        db.session.remove()
+        db.drop_all()
 
     def test_empty_db(self):
         resp = self.app.get('/')
@@ -26,7 +28,7 @@ class FlaskrTestCase(unittest.TestCase):
         resp = self.app.post("/register", data={'username': 'test', 'password': 'test'}, follow_redirects=True)
         self.assertEqual(resp.status_code, 200)
         self.assertTrue("You are registered" in resp.data)
-        self.assertEqual(self.session.query(User).filter_by(username='test').count(), 1)
+        self.assertEqual(User.query.filter_by(username='test').count(), 1)
 
     def test_login(self):
         self.app.post("/register", data={'username': 'test', 'password': 'test'}, follow_redirects=True)
