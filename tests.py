@@ -12,8 +12,6 @@ flaskr.app.config.from_object('test_settings')
 class FlaskrTestCase(TestCase):
 
     def create_app(self):
-        c = app.config
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://%s:%s@%s/%s' % (c['DATABASE_USER'], c['DATABASE_PASSWORD'], 'localhost', c['DATABASE_NAME'])
         return app
 
     def setUp(self):
